@@ -63,6 +63,7 @@ app.get('/api/hello', function(req, res) {
 
 // 
 app.post('/api/shorturl', (req, res, next) => {
+    console.log('/api/shorturl route')
     Url.findOne({original_url: req.body.url}, (err, doc) => {
         //if(err) return console.error(err);
         const domainNameRegex = /(https?:\/\/)(.*)/ig;
@@ -89,17 +90,24 @@ app.post('/api/shorturl', (req, res, next) => {
 
 // 
 app.get('/api/shorturl/:short_url', (req, res, next) => {
+    console.log('/api/shorturl/:short_url route')
     const regex = /^\d*$/;
     if(regex.test(req.params.short_url)){
+        console.log('test1')
         Url.findOne({short_url: req.params.short_url}, (err, doc) => {
+            console.log('test2')
             if(err) return console.error(err);
+            console.log('test3')
             if(doc === null){
+                console.log('test4')
                 return res.json({error:"No short URL found for the given input"});
             } else {
+                console.log('test5')
                 return res.redirect(doc.original_url);
             }
         });
     } else {
+        console.log('test6')
         return res.json({error: "Wrong format"});
     }
 })
