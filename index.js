@@ -90,6 +90,21 @@ app.post('/api/shorturl', (req, res, next) => {
     });
 });
 
+// 
+app.get('/api/shorturl/:short_url', (req, res, next) => {
+    const regex = /^\d*$/;
+    if(regex.test(req.params.short_url)){
+        Url.findOne({short_url: req.params.short_url}, (err, doc) => {
+            if(err) return console.error(err);
+            res.redirect(doc.original_url);
+            next();
+        });
+    } else {
+        res.json({error: "Wrong format"});
+        next();
+    }
+})
+
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
