@@ -64,14 +64,13 @@ app.get('/api/hello', function(req, res) {
 // 
 app.post('/api/shorturl', (req, res, next) => {
     Url.findOne({original_url: req.body.url}, (err, doc) => {
-        if(err) return console.error(err);
+        //if(err) return console.error(err);
         const domainNameRegex = /(https?:\/\/)(.*)/ig;
         const domainNameMatch = domainNameRegex.exec(req.body.url);
         if(domainNameMatch === null){
-            res.json({error: 'invalid url'});
-            next()
+            // Use return instead of next() so it won't continue to domainNameMatch[2]
+            return res.json({error: 'invalid url'});
         }
-        console.log(domainNameMatch[2])
         dns.lookup(domainNameMatch[2], (err, records) => {
             if(err) return res.json({error: 'invalid url'});
             next();
