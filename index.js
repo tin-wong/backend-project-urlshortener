@@ -23,10 +23,10 @@ const urlSchema = new mongoose.Schema({
 const Url = mongoose.model('Url', urlSchema);
 
 //Delete all Documents
-Url.deleteMany({}, (error, mongooseDeleteResult) => {
-    if(error) return console.error(error);
-    console.log(mongooseDeleteResult);
-});
+//Url.deleteMany({}, (error, mongooseDeleteResult) => {
+//     if(error) return console.error(error);
+//     console.log(mongooseDeleteResult);
+// });
 
 let total = 0; 
 async function mongooseCount(){
