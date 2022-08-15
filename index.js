@@ -73,7 +73,6 @@ app.post('/api/shorturl', (req, res, next) => {
         }
         dns.lookup(domainNameMatch[2], (err, records) => {
             if(err) return res.json({error: 'invalid url'});
-            next();
         });
         if(doc === null){
             documentsCount();
@@ -81,11 +80,9 @@ app.post('/api/shorturl', (req, res, next) => {
             newUrl.save((err, doc) => {
                 if(err) return console.error(err);
             })
-            res.json({original_url: req.body.url, short_url: total + 1});
-            next();
+            return res.json({original_url: req.body.url, short_url: total + 1});
         } else {
-            res.json({original_url: doc.original_url, short_url: doc.short_url});
-            next();
+            return res.json({original_url: doc.original_url, short_url: doc.short_url});
         }
     });
 });
@@ -97,16 +94,13 @@ app.get('/api/shorturl/:short_url', (req, res, next) => {
         Url.findOne({short_url: req.params.short_url}, (err, doc) => {
             if(err) return console.error(err);
             if(doc === null){
-                res.json({error:"No short URL found for the given input"});
-                next();
+                return res.json({error:"No short URL found for the given input"});
             } else {
-                res.redirect(doc.original_url);
-                next();
+                return res.redirect(doc.original_url);
             }
         });
     } else {
-        res.json({error: "Wrong format"});
-        next();
+        return res.json({error: "Wrong format"});
     }
 })
 
