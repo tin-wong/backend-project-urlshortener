@@ -9,6 +9,7 @@ const dns = require('dns');
 // Install and Set Up Mongoose
 const mongoose = require('mongoose');
 const { doesNotMatch } = require('assert');
+const { exit } = require('process');
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 
 // Create a Model
@@ -64,27 +65,74 @@ app.get('/api/hello', function(req, res) {
 // 
 app.post('/api/shorturl', (req, res, next) => {
     console.log('/api/shorturl route')
-    Url.findOne({original_url: req.body.url}, (err, doc) => {
-        //if(err) return console.error(err);
-        const domainNameRegex = /(https?:\/\/)(.*)/ig;
-        const domainNameMatch = domainNameRegex.exec(req.body.url);
-        if(domainNameMatch === null){
-            // Use return instead of next() so it won't continue to domainNameMatch[2]
-            return res.json({error: 'invalid url'});
-        }
-        dns.lookup(domainNameMatch[2], (err, records) => {
-            if(err) return res.json({error: 'invalid url'});
-        });
-        if(doc === null){
-            documentsCount();
-            let newUrl = new Url({original_url: req.body.url, short_url: total + 1});
-            newUrl.save((err, doc) => {
-                if(err) return console.error(err);
-            })
-            return res.json({original_url: req.body.url, short_url: total + 1});
-        } else {
-            return res.json({original_url: doc.original_url, short_url: doc.short_url});
-        }
+    const domainNameRegex = /(https?:\/\/)(.*)/ig;
+    const domainNameMatch = domainNameRegex.exec(req.body.url);
+    if(domainNameMatch === null){
+        // Use return instead of next() so it won't continue to domainNameMatch[2]
+        console.log('domainNameMatch test')
+        return res.json({error: 'invalid url'});
+    }
+
+    dns.lookup(domainNameMatch[2], (err, address, family) => {
+        console.log(domainNameMatch[2]);
+        console.log(address);
+        if(err) return res.json({error: "invalid URL"});
+        Url.findOne({original_url: req.body.url}, (err, doc) => {
+            if(err) return console.error(err);
+            if(doc === null){
+                documentsCount();
+                let newUrl = new Url({original_url: req.body.url, short_url: total + 1});
+                newUrl.save((err, doc) => {
+                    if(err) return console.error(err);
+                })
+                return res.json({original_url: req.body.url, short_url: total + 1});
+            } else {
+                return res.json({original_url: doc.original_url, short_url: doc.short_url});
+            }
+    })
+    
+        // async function getAddr(href) {
+        //     console.log("Check =>", href);
+        //     let resVal = undefined;
+        //     await dns.lookup( new URL(href).host , (err, address, family) => {
+        //       return resVal = (err) ? false : address;
+        //     });
+          
+        //     await new Promise((resolve, reject) => setTimeout(resolve, 1000));
+        //     console.log("Check =>", href, "is host Good? [", resVal, "]");
+        //     return resVal;
+        // }
+
+        // getAddr(domainNameMatch[2]);
+
+        // const dnsLookup = new Promise((resolve, reject) => {
+        //     dns.lookup(domainNameMatch[2], (err, records, family) => {
+        //         if(err) reject(err);
+        //         resolve(records);
+        //     });
+        // });
+        // dnsLookup.then(res => {
+        //     console.log(res)
+        //     if(res === undefined){
+        //         console.log(res)
+        //     }
+        // })
+        // .catch(err => console.log(err));
+        
+        // let dnsValue = undefined;
+        // dns.lookup(domainNameMatch[2], (err, records) => {
+        //     if(records === undefined){
+        //         returnInvalidUrl(records);
+        //     }
+        // });
+        
+        // function returnInvalidUrl(address){
+        //     dnsValue = address;
+        // }
+
+        // console.log(dnsValue);
+
+
     });
 });
 
