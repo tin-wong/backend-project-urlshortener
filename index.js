@@ -65,7 +65,7 @@ app.get('/api/hello', function(req, res) {
 // 
 app.post('/api/shorturl', (req, res, next) => {
     console.log('/api/shorturl route')
-    const domainNameRegex = /(https?:\/\/)(.*)/ig;
+    const domainNameRegex = /(https?:\/\/)(.*)(\/)/ig;
     const domainNameMatch = domainNameRegex.exec(req.body.url);
     if(domainNameMatch === null){
         // Use return instead of next() so it won't continue to domainNameMatch[2]
