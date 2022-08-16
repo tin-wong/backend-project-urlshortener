@@ -20,11 +20,16 @@ const urlSchema = new mongoose.Schema({
 
 const Url = mongoose.model('Url', urlSchema);
 
-// Delete all exisiting documents in the database
+// Delete all exisiting documents in the database. Then initialize it with a document. 
 Url.deleteMany({}, (error, mongooseDeleteResult) => {
     if(error) return console.error(error);
     console.log(mongooseDeleteResult);
+    let newUrl = new Url({original_url: 'https://freeCodeCamp.org', short_url: 1});
+    newUrl.save((err, doc) => {
+        if(err) return console.error(err);
+    })
 });
+
 
 // Count the number of exisiting documents. Use async and await to wait for the result before proceeding. 
 let total = 0; 
