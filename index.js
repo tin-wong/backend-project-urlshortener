@@ -5,11 +5,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
 
-
 // Install and Set Up Mongoose
 const mongoose = require('mongoose');
-const { doesNotMatch } = require('assert');
-const { exit } = require('process');
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 
 // Create a Model
@@ -64,18 +61,15 @@ app.get('/api/hello', function(req, res) {
 
 // 
 app.post('/api/shorturl', (req, res, next) => {
-    console.log('/api/shorturl route')
     const domainNameRegex = /(https?:\/\/)(([a-z]|[A-Z]|[0-9]|\-|\.)*)/ig;
     const domainNameMatch = domainNameRegex.exec(req.body.url);
     if(domainNameMatch === null){
         // Use return instead of next() so it won't continue to domainNameMatch[2]
-        console.log('domainNameMatch test')
         return res.json({error: 'invalid url'});
     }
 
     dns.lookup(domainNameMatch[2], (err, address, family) => {
-        console.log(domainNameMatch[2]);
-        console.log(address);
+
         if(err) return res.json({error: "invalid URL"});
         Url.findOne({original_url: req.body.url}, (err, doc) => {
             if(err) return console.error(err);
@@ -95,24 +89,17 @@ app.post('/api/shorturl', (req, res, next) => {
 
 // 
 app.get('/api/shorturl/:short_url', (req, res, next) => {
-    console.log('/api/shorturl/:short_url route')
     const regex = /^\d*$/;
     if(regex.test(req.params.short_url)){
-        console.log('test1')
         Url.findOne({short_url: req.params.short_url}, (err, doc) => {
-            console.log('test2')
             if(err) return console.error(err);
-            console.log('test3')
             if(doc === null){
-                console.log('test4')
                 return res.json({error:"No short URL found for the given input"});
             } else {
-                console.log('test5')
                 return res.redirect(doc.original_url);
             }
         });
     } else {
-        console.log('test6')
         return res.json({error: "Wrong format"});
     }
 })
