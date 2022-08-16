@@ -24,10 +24,10 @@ const urlSchema = new mongoose.Schema({
 const Url = mongoose.model('Url', urlSchema);
 
 //Delete all Documents
-//Url.deleteMany({}, (error, mongooseDeleteResult) => {
-//     if(error) return console.error(error);
-//     console.log(mongooseDeleteResult);
-// });
+Url.deleteMany({}, (error, mongooseDeleteResult) => {
+    if(error) return console.error(error);
+    console.log(mongooseDeleteResult);
+});
 
 let total = 0; 
 async function mongooseCount(){
@@ -89,50 +89,7 @@ app.post('/api/shorturl', (req, res, next) => {
             } else {
                 return res.json({original_url: doc.original_url, short_url: doc.short_url});
             }
-    })
-    
-        // async function getAddr(href) {
-        //     console.log("Check =>", href);
-        //     let resVal = undefined;
-        //     await dns.lookup( new URL(href).host , (err, address, family) => {
-        //       return resVal = (err) ? false : address;
-        //     });
-          
-        //     await new Promise((resolve, reject) => setTimeout(resolve, 1000));
-        //     console.log("Check =>", href, "is host Good? [", resVal, "]");
-        //     return resVal;
-        // }
-
-        // getAddr(domainNameMatch[2]);
-
-        // const dnsLookup = new Promise((resolve, reject) => {
-        //     dns.lookup(domainNameMatch[2], (err, records, family) => {
-        //         if(err) reject(err);
-        //         resolve(records);
-        //     });
-        // });
-        // dnsLookup.then(res => {
-        //     console.log(res)
-        //     if(res === undefined){
-        //         console.log(res)
-        //     }
-        // })
-        // .catch(err => console.log(err));
-        
-        // let dnsValue = undefined;
-        // dns.lookup(domainNameMatch[2], (err, records) => {
-        //     if(records === undefined){
-        //         returnInvalidUrl(records);
-        //     }
-        // });
-        
-        // function returnInvalidUrl(address){
-        //     dnsValue = address;
-        // }
-
-        // console.log(dnsValue);
-
-
+        })
     });
 });
 
